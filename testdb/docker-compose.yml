@@ -1,0 +1,15 @@
+version: "3"
+
+volumes:
+        db_data: {}
+
+services:
+    etl-db-test:
+        image: postgres:9
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        ports: 
+            - 5432:5432
+        environment:
+            POSTGRES_PASSWORD: toto
+            POSTGRES_USER: etl

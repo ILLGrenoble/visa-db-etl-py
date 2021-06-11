@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    etl:
+        image: pisa-etl
+        build: .
+        volumes:
+            - './csv_data/:/usr/src/app/csv_data/'
+            - ./CSV_source.py:/usr/src/app/CSV_source.py
+            - ./loader.py:/usr/src/app/loader.py
+            - ./schema.sql:/usr/src/app/schema.sql
