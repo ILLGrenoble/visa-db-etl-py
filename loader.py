@@ -22,33 +22,10 @@ class Loader():
             await self.conn.execute("delete from experiment_user;")
             await self.conn.execute("delete from experiment where id not in (select distinct experiment_id from instance_experiment);")
             await self.conn.execute("delete from proposal where id not in (select distinct proposal_id from experiment);")
-            await self.conn.execute("delete from cycle where id not in (select distinct cycle_id from experiment)")
             await self.conn.execute("delete from instrument where id not in (select distinct instrument_id from experiment);")
             await self.conn.execute("delete from users where id not in (select distinct user_id from instance_command union select distinct user_id from instance_member union select distinct user_id from instance_session_member union select distinct user_id from user_role);")
             await self.conn.execute("delete from employer where id not in (select distinct affiliation_id from users);")
             print("everything cleaned")
-
-    async def cycle(self, cycles):
-        async with self.conn.transaction():
-            inserted = 0
-            updated = 0
-            total_lines = 0
-            for cycle in cycles:
-                res = await self.conn.execute(
-                    """INSERT INTO cycle (id, name, start_date, end_date)
-                    VALUES ($1, $2, $3, $4)
-                    ON CONFLICT (id) DO UPDATE
-                    SET name = $2, start_date=$3, end_date=$4""",
-                    int(cycle['id']),
-                    cycle['name'],
-                    cycle['start_date'],
-                    cycle['end_date']
-                )
-                response_parsed = self.parse_response_reg.match(res)
-                inserted  += int(response_parsed.group(1))
-                updated += int(response_parsed.group(2))
-                total_lines += 1
-            print("Cycle : INSERT {0} UPDATE {1} TOTAL {2}".format(inserted, updated, total_lines))
 
     async def employer(self, employers):
         async with self.conn.transaction():
@@ -79,13 +56,12 @@ class Loader():
             total_lines = 0
             for experiment in experiments:
                 res = await self.conn.execute(
-                    """INSERT INTO experiment (id, proposal_id, cycle_id, instrument_id)
+                    """INSERT INTO experiment (id, proposal_id, instrument_id)
                     VALUES ($1, $2, $3, $4)
                     ON CONFLICT (id) DO UPDATE
-                    SET proposal_id = $2, cycle_id=$3, instrument_id=$4""",
+                    SET proposal_id = $2, instrument_id=$4""",
                     experiment['id'],
                     int(experiment['proposal_id']),
-                    int(experiment['cycle_id']),
                     int(experiment['instrument_id'])
                 )
                 response_parsed = self.parse_response_reg.match(res)

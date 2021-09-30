@@ -29,16 +29,6 @@ create table if not exists configuration
     value varchar(8192) not null
 );
 
-create table if not exists cycle
-(
-    id         bigint       not null
-        constraint cycle_pkey
-            primary key,
-    end_date   timestamp    not null,
-    name       varchar(100) not null,
-    start_date timestamp    not null
-);
-
 create table if not exists employer
 (
     id           bigint not null
@@ -206,9 +196,6 @@ create table if not exists experiment
     id            varchar(32) not null
         constraint experiment_pkey
             primary key,
-    cycle_id      bigint      not null
-        constraint fk_cycle_id
-            references cycle,
     instrument_id bigint      not null
         constraint fk_instrument_id
             references instrument,

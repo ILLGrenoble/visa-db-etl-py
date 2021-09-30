@@ -25,7 +25,6 @@ async def run():
     await loader.employer(load_csv("employer"))
     await loader.user(load_csv("user"))
     await loader.instrument(load_csv("instrument"))
-    await loader.cycle(load_csv("cycle"))
     await loader.proposal(load_csv("proposal"))
     await loader.experiment(load_csv("experiment"))
     await loader.experiment_user(load_csv("experiment_user"))
