@@ -56,13 +56,15 @@ class Loader():
             total_lines = 0
             for experiment in experiments:
                 res = await self.conn.execute(
-                    """INSERT INTO experiment (id, proposal_id, instrument_id)
-                    VALUES ($1, $2, $3, $4)
+                    """INSERT INTO experiment (id, proposal_id, instrument_id, start_date, end_date)
+                    VALUES ($1, $2, $3, $4, $5)
                     ON CONFLICT (id) DO UPDATE
-                    SET proposal_id = $2, instrument_id=$4""",
+                    SET proposal_id = $2, instrument_id=$3""",
                     experiment['id'],
                     int(experiment['proposal_id']),
-                    int(experiment['instrument_id'])
+                    int(experiment['instrument_id']),
+                    experiment['start_date'],
+                    experiment['end_date']
                 )
                 response_parsed = self.parse_response_reg.match(res)
                 inserted  += int(response_parsed.group(1))
@@ -233,7 +235,7 @@ class Loader():
                     """INSERT INTO users (id, first_name, last_name, email, affiliation_id, instance_quota, activated_at)
                     VALUES ($1, $2, $3, $4, $5, $6, $7)
                     ON CONFLICT (id) DO UPDATE
-                    SET first_name = $2, last_name = $3, email = $4, affiliation_id = $5, instance_quota = $6, activated = $7""",
+                    SET first_name = $2, last_name = $3, email = $4, affiliation_id = $5, instance_quota = $6, activated_at = $7""",
                     user['id'],
                     user['first_name'],
                     user['last_name'],
